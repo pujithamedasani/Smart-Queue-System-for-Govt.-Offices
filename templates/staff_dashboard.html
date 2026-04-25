@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card" style="max-width: 800px;">
+    <h2>Staff Queue Management</h2>
+    <hr>
+    
+    <div style="display: flex; gap: 20px;">
+        <!-- Left: Current Serving -->
+        <div style="flex: 1; background: #f0f4ff; padding: 20px; border-radius: 10px;">
+            <h3>Currently Serving</h3>
+            {% if current %}
+                <h1 style="color: #1a237e;">{{ current.token_number }}</h1>
+                <p>Citizen: {{ current.user.first_name }} {{ current.user.last_name }}</p>
+                <p>Purpose: {{ current.purpose }}</p>
+                <a href="/staff/complete/{{ current.id }}"><button style="background: green;">Mark as Completed</button></a>
+            {% else %} 
+                <p>No one is being served currently.</p>
+            {% endif %}
+        </div>
+
+        <!-- Right: Waiting Requests -->
+        <div style="flex: 1.5;">
+            <h3>Waiting Requests</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #eee;">
+                        <th style="padding: 10px;">Token</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in waiting %}
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">{{ t.token_number }} {% if t.is_priority %}(⭐){% endif %}</td>
+                        <td>{{ t.user.first_name }}</td>
+                        <td>
+                            <!-- Only show "Accept" button if no one is currently being served -->
+                            {% if not current %}
+                            <a href="/staff/call_next/{{ t.id }}"><button style="padding: 5px 10px; font-size: 12px;">Accept</button></a>
+                            {% else %}
+                            <span style="color: gray; font-size: 12px;">Finish current first</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

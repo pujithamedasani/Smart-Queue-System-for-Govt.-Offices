@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+    <h2>Citizen/Staff Login</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for message in messages %}
+          <p style="color: red; font-size: 14px;">{{ message }}</p>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    <!-- Step 1 Form: Always visible -->
+    <form action="/send_otp" method="POST" id="otpForm">
+        <input type="text" name="username" placeholder="Mobile No. or Email" 
+               value="{{ session.user_attempting_login if session.user_attempting_login else '' }}" required>
+        
+        {% if not session.otp_sent %}
+            <button type="submit" style="background: #5c6bc0;">Get Secure OTP</button>
+        {% endif %}
+    </form>
+
+    <!-- Step 2 Form: Visible only after OTP is sent -->
+    {% if session.otp_sent %}
+    <form action="/login" method="POST" style="margin-top: 10px;">
+        <!-- Hidden field to pass username again -->
+        <input type="hidden" name="username" value="{{ session.user_attempting_login }}">
+        
+        <input type="text" name="otp_input" placeholder="Enter 4-Digit OTP" required 
+               style="border: 2px solid #1a237e; background: #e8eaf6;">
+        
+        <input type="password" name="password" placeholder="Enter Password" required>
+        
+        <p style="margin-top:10px;">CAPTCHA:</p>
+        <div class="captcha-box">{{ captcha }}</div>
+        <input type="hidden" name="actual_captcha" value="{{ captcha }}">
+        <input type="text" name="captcha_input" placeholder="Enter Captcha Code" required>
+        
+        <button type="submit">Sign In to Portal</button>
+    </form>
+    {% endif %}
+
+    <div style="margin-top: 20px; font-size: 13px;">
+        <a href="/forgot_password" style="color: #1a237e;">Forgot Password?</a> | 
+        <a href="/signup" style="color: #1a237e; font-weight: bold;">Create Account</a>
+    </div>
+</div>
+<!-- JavaScript for Browser Pop-up Alert -->
+{% with otps = get_flashed_messages(category_filter=["browser_otp"]) %}
+  {% if otps %}
+    <script>
+      // This displays the native browser popup
+      alert("GOVERNMENT SMS GATEWAY\n\nTo: {{ session.user_attempting_login }}\nYour secret login OTP is: {{ otps[0] }}");
+    </script>
+  {% endif %}
+{% endwith %}
+
+{% endblock %}

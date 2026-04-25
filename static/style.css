@@ -1,0 +1,85 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+
+/* Navbar styling */
+.header {
+    background: #1a237e; /* Dark Government Blue */
+    color: white;
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header .title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.header .nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+    padding: 8px 15px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.1);
+}
+
+.header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+/* Container */
+.main-content {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+.captcha-box {
+    background: #eee;
+    padding: 10px;
+    font-family: 'Courier New';
+    font-weight: bold;
+    font-size: 24px;
+    letter-spacing: 5px;
+    display: inline-block;
+    margin: 10px 0;
+    user-select: none;
+    font-style: italic;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Queue Analytics</title>
+</head>
+<body>
+    <div class="container" style="max-width: 600px;">
+        <h2>Service Performance</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <p>Avg. Wait</p>
+                <h3>{{ avg_wait }}m</h3>
+            </div>
+            <div class="stat-box">
+                <p>Total Served</p>
+                <h3>{{ total }}</h3>
+            </div>
+        </div>
+
+        <h4>Peak Hours Traffic</h4>
+        <img src="/static/plot.png" style="width: 100%; border-radius: 8px;">
+        
+        <a href="/admin"><button>Back to Panel</button></a>
+    </div>
+</body>
+</html>

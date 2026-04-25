@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+    <h2>Create Account</h2>
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color: red; font-size: 13px;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <form action="/signup" method="POST">
+        <input type="text" name="fname" placeholder="First Name" required>
+        <input type="text" name="lname" placeholder="Last Name" required>
+        <input type="text" name="username" placeholder="Mobile No or Email" required>
+        
+        <select name="role" required>
+            <option value="citizen">I am a Citizen</option>
+            <option value="staff">I am Government Employee</option>
+        </select>
+
+        <!-- PASSWORD FIELD WITH VALIDATION -->
+        <input type="password" name="password" id="password" placeholder="Create Password" 
+               pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&#]).{8,}" 
+               title="Must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character (@$!%*?&#)" 
+               required>
+
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        
+        <p style="font-size: 11px; color: gray; text-align: left; margin: 5px 0 15px 5px;">
+            * Min 8 characters, 1 Uppercase, 1 Lowercase, 1 Number, 1 Special Char.
+        </p>
+
+        <button type="submit">Sign Up</button>
+    </form>
+    <p style="margin-top:20px;">Already registered? <a href="/">Sign In</a></p>
+</div>
+{% endblock %}

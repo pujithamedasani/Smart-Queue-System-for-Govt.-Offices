@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Staff Control</title>
+</head>
+<body>
+    <div class="container" style="max-width: 600px;">
+        <h2>Staff Control Panel</h2>
+        
+        <div class="token-card" style="background: #fff3cd; border-color: #ffeeba;">
+            <p>NOW SERVING</p>
+            <div class="token-number" style="color: #856404;">
+                {{ current.token_number if current else '---' }}
+            </div>
+            <a href="/next"><button style="background: #856404;">Call Next Citizen</button></a>
+        </div>
+
+        <h4 style="text-align: left;">Next in Line:</h4>
+        <div style="text-align: left; max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px;">
+            <ul>
+                {% for t in waiting %}
+                <li>
+                    <span>Token: <strong>{{ t.token_number }}</strong></span>
+                    {% if t.is_priority %}<span class="priority-tag">Priority</span>{% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <a href="/analytics"><button style="background: var(--secondary-color); margin-top: 20px;">View Queue Analytics</button></a>
+    </div>
+</body>
+</html>

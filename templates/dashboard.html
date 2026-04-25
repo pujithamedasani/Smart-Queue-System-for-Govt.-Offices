@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Auto-refresh every 20 seconds to catch status updates from staff -->
+<meta http-equiv="refresh" content="20">
+
+<div class="card">
+    {% if not ticket %}
+        <!-- CASE 1: USER HAS NO TICKET - SHOW REGISTRATION FORM -->
+        <h2>Register Your Visit</h2>
+        <form action="/book_ticket" method="POST">
+            
+            <!-- State Selection -->
+            <select name="state" id="state" onchange="populateDistricts()" required>
+                <option value="">Select State</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                <option value="Assam">Assam</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Chhattisgarh">Chhattisgarh</option>
+                <option value="Goa">Goa</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                <option value="Jharkhand">Jharkhand</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Manipur">Manipur</option>
+                <option value="Meghalaya">Meghalaya</option>
+                <option value="Mizoram">Mizoram</option>
+                <option value="Nagaland">Nagaland</option>
+                <option value="Odisha">Odisha</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Sikkim">Sikkim</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Tripura">Tripura</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Uttarakhand">Uttarakhand</option>
+                <option value="West Bengal">West Bengal</option>
+            </select>
+
+            <!-- District Selection -->
+            <select name="district" id="district" required>
+                <option value="">Select District First</option>
+            </select>
+
+            <input type="text" name="purpose" placeholder="Purpose of Visit (e.g. Aadhaar, License)" required>
+            
+            <label style="display: block; text-align: center; margin: 10px 0; font-size: 14px;">
+            <input type="checkbox" name="priority"> I am a Senior Citizen / Specially Abled
+            </label>
+
+            <button type="submit">Join Digital Waitlist</button>
+        </form>
+
+    {% elif ticket.status == 'Waiting' %}
+        <!-- CASE 2: USER IS WAITING IN QUEUE -->
+        <div class="token-card" style="border-color: #f39c12; background-color: #fffaf0;">
+            <div style="background: #f39c12; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-weight: bold; font-size: 12px;">
+                STATUS: WAITING
+            </div>
+            <p style="margin-top: 15px; color: #7f8c8d; font-size: 14px;">YOUR TOKEN NUMBER</p>
+            <h1 style="font-size: 50px; color: #e67e22; margin: 10px 0;">{{ ticket.token_number }}</h1>
+            
+            <p style="font-size: 14px;">Office: <strong>{{ ticket.district }}, {{ ticket.state }}</strong></p>
+            
+            <div style="display: flex; justify-content: space-around; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                <div>
+                    <p style="font-size: 11px; color: gray; margin: 0;">POSITION</p>
+                    <h2 style="margin: 0; color: #2c3e50;">#{{ position }}</h2>
+                </div>
+                <div>
+                    <p style="font-size: 11px; color: gray; margin: 0;">EST. WAIT</p>
+                    <h2 style="margin: 0; color: #2c3e50;">{{ wait_time }} Mins</h2>
+                </div>
+            </div>
+            <p style="font-size: 12px; color: #95a5a6; margin-top: 20px;">
+                Please wait. This page updates automatically every 20s.
+            </p>
+        </div>
+
+    {% elif ticket.status == 'Serving' %}
+        <!-- CASE 3: STAFF ACCEPTED - IT IS THEIR TURN -->
+        <div class="token-card pulse-border" style="border: 3px solid #27ae60; background-color: #ebfaeb; padding: 30px;">
+            <div style="background: #27ae60; color: white; padding: 8px 20px; border-radius: 20px; display: inline-block; font-weight: bold;">
+                IT IS YOUR TURN!
+            </div>
+            <h1 style="font-size: 60px; color: #27ae60; margin: 20px 0;">{{ ticket.token_number }}</h1>
+            <h3 style="color: #2c3e50;">Please Proceed to the Counter</h3>
+            <p style="color: #27ae60; font-weight: 500;">Staff is ready to assist you now.</p>
+        </div>
+
+        <style>
+            .pulse-border {
+                animation: pulse-green 2s infinite;
+            }
+            @keyframes pulse-green {
+                0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); }
+                70% { box-shadow: 0 0 0 20px rgba(39, 174, 96, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
+            }
+        </style>
+    {% endif %}
+</div>
+
+<!-- JavaScript for Dynamic Districts -->
+<script>
+    const districtData = {
+        "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"],
+        "Telangana": ["Hyderabad", "Rangareddy", "Medchal", "Warangal", "Nizamabad", "Karimnagar"],
+        "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad"],
+        "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi"],
+        "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem", "Trichy"],
+        "Delhi": ["New Delhi", "North Delhi", "South Delhi", "West Delhi"],
+        "Uttar Pradesh": ["Lucknow", "Kanpur", "Varanasi", "Agra", "Meerut"],
+        "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
+        "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur"]
+    };
+
+    function populateDistricts() {
+        const stateSelect = document.getElementById("state");
+        const districtSelect = document.getElementById("district");
+        const selectedState = stateSelect.value;
+
+        // Clear current districts
+        districtSelect.innerHTML = '<option value="">Select District</option>';
+
+        if (districtData[selectedState]) {
+            districtData[selectedState].forEach(district => {
+                let option = document.createElement("option");
+                option.value = district;
+                option.text = district;
+                districtSelect.add(option);
+            });
+        } else if (selectedState !== "") {
+            // Fallback for states not in our JSON
+            let option = document.createElement("option");
+            option.value = "Main Office";
+            option.text = "Main Office";
+            districtSelect.add(option);
+        }
+    }
+</script>
+{% endblock %}
